@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >-
+  AWS SAM template used to deploy a TypeScript backend with Webpack
+
+Transform:
+  - AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Runtime: nodejs12.x
+    Handler: dist/webpack/app.handler
+    MemorySize: 128
+    Timeout: 3
+    AutoPublishAlias: live
+    Tracing: Active
+
+Resources:
+  AwsGlobalLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: AWS dependencies global layer
+      ContentUri: layers/global-layers/aws-global-layer
+      CompatibleRuntimes:
+        - nodejs12.x
+      RetentionPolicy: Delete
+    Metadata:
+      BuildMethod: nodejs12.x
+
+  CommonGlobalLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Common dependencies global layer
+      ContentUri: layers/global-layers/common-global-layer
+      CompatibleRuntimes:
+        - nodejs12.x
+      RetentionPolicy: Delete
+    Metadata:
+      BuildMethod: nodejs12.x
+
+  HelloFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Hello function
+      CodeUri: functions/hello-function
+      Layers:
+        - !Ref CommonGlobalLayer
+        - !Ref AwsGlobalLayer
+      Environment:
+        Variables:
+          REGION: !Ref AWS::Region
+
+  GoodbyeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Goodbye function
+      CodeUri: functions/goodbye-function
+      Layers:
+        - !Ref CommonGlobalLayer
+
+Outputs:
+  StackName:
+    Description: Stack name
+    Value: !Ref AWS::StackName
+  StackArn:
+    Description: Stack ARN
+    Value: !Ref AWS::StackId
+  StackRegion:
+    Description: Stack region
+    Value: !Ref AWS::Region
+
+  AwsGlobalLayerArn:
+    Description: AWS dependencies global layer ARN
+    Value: !Ref AwsGlobalLayer
+  CommonGlobalLayerArn:
+    Description: Common dependencies global layer ARN
+    Value: !Ref CommonGlobalLayer
+
+  HelloFunctionName:
+    Description: Hello function name
+    Value: !Ref HelloFunction
+  HelloFunctionArn:
+    Description: Hello function ARN
+    Value: !GetAtt HelloFunction.Arn
+  GoodbyeFunctionName:
+    Description: Goodbye function name
+    Value: !Ref GoodbyeFunction
+  GoodbyeFunctionArn:
+    Description: Goodbye function ARN
+    Value: !GetAtt GoodbyeFunction.Arn

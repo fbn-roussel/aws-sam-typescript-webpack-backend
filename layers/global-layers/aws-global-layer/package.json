@@ -1,0 +1,12 @@
+{
+  "name": "aws-global-layer",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "^12"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.778.0",
+    "aws-xray-sdk": "^3.2.0"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "extends": "../builds/local-build/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "./dist/tsc",
+    "typeRoots": ["./node_modules/@types"]
+  },
+  "include": ["./*-function/src/*.ts"]
+}

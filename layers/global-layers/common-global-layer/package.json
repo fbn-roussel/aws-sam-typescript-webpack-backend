@@ -1,0 +1,12 @@
+{
+  "name": "common-global-layer",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "^12"
+  },
+  "dependencies": {
+    "source-map-support": "^0.5.19",
+    "axios": "^0.20.0"
+  }
+}

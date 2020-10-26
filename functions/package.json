@@ -1,0 +1,20 @@
+{
+  "name": "functions",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "^12"
+  },
+  "scripts": {
+    "clean": "rm -rf node_modules dist */dist",
+    "build": "yarn install && yarn tsc",
+    "bundle": "yarn install && yarn webpack"
+  },
+  "dependencies": {
+    "aws-global-layer": "file:../layers/global-layers/aws-global-layer",
+    "common-global-layer": "file:../layers/global-layers/common-global-layer"
+  },
+  "devDependencies": {
+    "local-build": "file:../builds/local-build"
+  }
+}

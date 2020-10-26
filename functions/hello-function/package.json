@@ -1,0 +1,9 @@
+{
+  "name": "hello-function",
+  "description": "Empty package.json (required by SAM) as packaging is handled at the functions root folder with webpack",
+  "version": "1.0.0",
+  "private": true,
+  "files": [
+    "dist"
+  ]
+}
