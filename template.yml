@@ -50,6 +50,17 @@ Resources:
         Variables:
           REGION: !Ref AWS::Region
 
+  HelloFunctionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Hello function layer
+      ContentUri: layers/function-layers/hello-function-layer
+      CompatibleRuntimes:
+        - nodejs12.x
+      RetentionPolicy: Delete
+    Metadata:
+      BuildMethod: nodejs12.x
+
   GoodbyeFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -57,6 +68,17 @@ Resources:
       CodeUri: functions/goodbye-function
       Layers:
         - !Ref CommonGlobalLayer
+
+  GoodbyeFunctionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Goodbye function layer
+      ContentUri: layers/function-layers/goodbye-function-layer
+      CompatibleRuntimes:
+        - nodejs12.x
+      RetentionPolicy: Delete
+    Metadata:
+      BuildMethod: nodejs12.x
 
 Outputs:
   StackName:
@@ -82,9 +104,16 @@ Outputs:
   HelloFunctionArn:
     Description: Hello function ARN
     Value: !GetAtt HelloFunction.Arn
+  HelloFunctionLayerArn:
+    Description: Hello function layer ARN
+    Value: !Ref HelloFunctionLayer
+
   GoodbyeFunctionName:
     Description: Goodbye function name
     Value: !Ref GoodbyeFunction
   GoodbyeFunctionArn:
     Description: Goodbye function ARN
     Value: !GetAtt GoodbyeFunction.Arn
+  GoodbyeFunctionLayerArn:
+    Description: Goodbye function layer ARN
+    Value: !Ref GoodbyeFunctionLayer

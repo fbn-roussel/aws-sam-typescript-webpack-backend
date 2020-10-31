@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "aws-global-layer": "file:../layers/global-layers/aws-global-layer",
-    "common-global-layer": "file:../layers/global-layers/common-global-layer"
+    "common-global-layer": "file:../layers/global-layers/common-global-layer",
+    "hello-function-layer": "file:../layers/function-layers/hello-function-layer",
+    "goodbye-function-layer": "file:../layers/function-layers/goodbye-function-layer"
   },
   "devDependencies": {
     "local-build": "file:../builds/local-build"
