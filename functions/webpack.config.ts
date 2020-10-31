@@ -1,11 +1,13 @@
-const nodeExternals = require('webpack-node-externals');
+import { Configuration } from 'webpack';
 
-module.exports = {
+import webpackNodeExternals from 'webpack-node-externals';
+
+const config: Configuration = {
   mode: 'production',
   target: 'node',
   devtool: 'source-map',
 
-  externals: [nodeExternals()],
+  externals: [webpackNodeExternals()],
 
   entry: {
     'hello-function': './hello-function/src/app.ts',
@@ -31,3 +33,5 @@ module.exports = {
     ],
   },
 };
+
+export default config;
