@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "@aws-sam-typescript-webpack-backend/functions",
   "version": "1.0.0",
   "private": true,
   "engines": {
@@ -11,12 +11,12 @@
     "bundle": "yarn install && yarn webpack"
   },
   "dependencies": {
-    "aws-global-layer": "file:../layers/global-layers/aws-global-layer",
-    "common-global-layer": "file:../layers/global-layers/common-global-layer",
-    "hello-function-layer": "file:../layers/function-layers/hello-function-layer",
-    "goodbye-function-layer": "file:../layers/function-layers/goodbye-function-layer"
+    "@aws-sam-typescript-webpack-backend/aws-global-layer": "file:../layers/global-layers/aws-global-layer",
+    "@aws-sam-typescript-webpack-backend/common-global-layer": "file:../layers/global-layers/common-global-layer",
+    "@aws-sam-typescript-webpack-backend/hello-function-layer": "file:../layers/function-layers/hello-function-layer",
+    "@aws-sam-typescript-webpack-backend/goodbye-function-layer": "file:../layers/function-layers/goodbye-function-layer"
   },
   "devDependencies": {
-    "local-build": "file:../builds/local-build"
+    "@aws-sam-typescript-webpack-backend/build": "file:../build"
   }
 }

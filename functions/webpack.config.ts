@@ -15,7 +15,7 @@ const config: Configuration = {
   },
 
   output: {
-    filename: '[name]/dist/webpack/app.js',
+    filename: '[name]/dist/app.js',
     path: __dirname,
     libraryTarget: 'commonjs',
   },

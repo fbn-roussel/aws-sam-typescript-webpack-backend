@@ -1,0 +1,20 @@
+{
+  "name": "@aws-sam-typescript-webpack-backend/shared",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": "^12"
+  },
+  "scripts": {
+    "clean": "rm -rf node_modules dist",
+    "build": "yarn install && yarn tsc"
+  },
+  "dependencies": {
+    "pino": "^6.7.0"
+  },
+  "devDependencies": {
+    "@aws-sam-typescript-webpack-backend/build": "file:../build"
+  }
+}

@@ -3,8 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "clean": "rm -rf .aws-sam && cd functions && yarn clean",
-    "build": "cd functions && yarn build",
+    "clean": "rm -rf .aws-sam && yarn clean:shared && yarn clean:layers && yarn clean:functions",
+    "clean:shared": "cd shared && yarn clean && cd ..",
+    "clean:layers": "cd layers/global-layers/common-global-layer && yarn clean && cd ../../..",
+    "clean:functions": "cd functions && yarn clean && cd ..",
+    "build": "yarn build:shared && yarn build:layers && yarn build:functions",
+    "build:shared": "cd shared && yarn build && cd ..",
+    "build:layers": "cd layers/global-layers/common-global-layer && yarn build && cd ../../..",
+    "build:functions": "cd functions && yarn build && cd ..",
     "bundle": "cd functions && yarn bundle",
     "deploy": "sam build && sam deploy --guided"
   }

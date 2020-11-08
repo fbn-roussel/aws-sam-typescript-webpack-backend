@@ -1,5 +1,5 @@
 {
-  "name": "goodbye-function-layer",
+  "name": "@aws-sam-typescript-webpack-backend/goodbye-function-layer",
   "version": "1.0.0",
   "private": true,
   "engines": {

@@ -1,5 +1,7 @@
 import 'source-map-support/register';
 
+import { logger } from '@aws-sam-typescript-webpack-backend/shared';
+
 export const handler = async () => {
-  console.log('Goodbye serverless clouders !');
+  logger.info('Goodbye serverless clouders !');
 };

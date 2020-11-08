@@ -1,5 +1,5 @@
 {
-  "name": "aws-global-layer",
+  "name": "@aws-sam-typescript-webpack-backend/aws-global-layer",
   "version": "1.0.0",
   "private": true,
   "engines": {

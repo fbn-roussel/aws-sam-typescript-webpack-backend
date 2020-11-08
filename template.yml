@@ -9,7 +9,7 @@ Transform:
 Globals:
   Function:
     Runtime: nodejs12.x
-    Handler: dist/webpack/app.handler
+    Handler: dist/app.handler
     MemorySize: 128
     Timeout: 3
     AutoPublishAlias: live

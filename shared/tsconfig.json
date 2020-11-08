@@ -1,9 +1,11 @@
 {
   "extends": "../build/tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./",
+    "rootDir": "./src",
     "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
     "typeRoots": ["./node_modules/@types"]
   },
-  "include": ["./*-function/src/*.ts"]
+  "include": ["./src/**/*.ts"]
 }
