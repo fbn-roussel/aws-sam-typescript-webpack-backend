@@ -322,3 +322,12 @@ export default config;
 This configuration will do the tree shaking for each function and will put the generated `js` files in the `dist` folder.
 
 `webpack-node-externals` is used to make sure that all dependencies are not included (as they are in the layers).
+
+## How to use
+
+From the root folder use the following commands : 
+
+* `yarn clean` to remove all generated files and folders
+* `yarn build` to build the application with TypeScript
+* `yarn bundle` to bundle the application with Webpack
+* `yarn deploy` to deploy the application with SAM 
