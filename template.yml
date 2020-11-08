@@ -44,6 +44,7 @@ Resources:
       Description: Hello function
       CodeUri: functions/hello-function
       Layers:
+        - !Ref HelloFunctionLayer
         - !Ref CommonGlobalLayer
         - !Ref AwsGlobalLayer
       Environment:
@@ -67,6 +68,7 @@ Resources:
       Description: Goodbye function
       CodeUri: functions/goodbye-function
       Layers:
+        - !Ref GoodbyeFunctionLayer
         - !Ref CommonGlobalLayer
 
   GoodbyeFunctionLayer:
