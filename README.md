@@ -1,4 +1,4 @@
-# AWS SAM - Monorep TypeScript Backend With Yarn & Webpack
+# AWS SAM - Monorepo TypeScript Backend With Yarn & Webpack
 
 This repository shows how to build & deploy a Typescript backend monorepo using AWS SAM, Yarn & Webpack.
 
