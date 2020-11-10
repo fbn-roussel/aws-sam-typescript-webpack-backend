@@ -4,9 +4,9 @@ This repository shows how to build & deploy a Typescript backend monorepo using 
 
 The objectives :
 
-* Each function has its own package with its own code
-* No dependency at all in the packages thanks to Webpack & Lambda Layers so we can reduce the artifacts size
-* Share code between functions to avoid repeating ourself
+- Each function has its own package with its own code
+- No dependency at all in the packages thanks to Webpack & Lambda Layers so we can reduce the artifacts size
+- Share code between functions to avoid repeating ourself
 
 ## Prerequisites
 
@@ -87,14 +87,14 @@ At its core, webpack is a static module bundler for modern JavaScript applicatio
 
 All the configuration is dispatched into three folders :
 
-* `build` folder
-* `shared` folder
-* `layers` folder
-* `functions` folder
+- `build` folder
+- `shared` folder
+- `layers` folder
+- `functions` folder
 
 ### The build folder
 
-This folder contains all the configuration needed to build the code. 
+This folder contains all the configuration needed to build the code.
 
 The `package.json` contains the required dependencies :
 
@@ -108,10 +108,12 @@ The `package.json` contains the required dependencies :
   },
   "dependencies": {
     "@types/aws-lambda": "^8.10.64",
+    "@types/fs-extra": "^9.0.3",
     "@types/jest": "^26.0.15",
     "@types/node": "^14.14.2",
     "@types/pino": "^6.3.3",
     "@types/webpack-node-externals": "^2.5.0",
+    "fs-extra": "^9.0.1",
     "jest": "^26.6.1",
     "ts-jest": "^26.4.2",
     "ts-loader": "^8.0.6",
@@ -158,8 +160,8 @@ To illustrate this, I added a `logger.ts` file to share logging (using `pino`).
 
 This folder contains all the layers :
 
-* Global layers
-* Function layers
+- Global layers
+- Function layers
 
 Two global layers are setup here. One for the AWS SDK dependencies and one for the common dependencies (that contains the shared code as well).
 
@@ -177,6 +179,7 @@ Two global layers are setup here. One for the AWS SDK dependencies and one for t
   }
 }
 ```
+
 ```
 {
   "name": "@aws-sam-typescript-webpack-backend/common-global-layer",
@@ -209,8 +212,8 @@ Using layers this way, we can remove all the functions dependencies and minimize
 
 This folder contains all the functions :
 
-* Hello function
-* Goodbye function
+- Hello function
+- Goodbye function
 
 SAM requires the `CodeUri` to be a path that contains a `package.json` file. Following this convention involves to setup a `package.json` for each function and to duplicate the configuration. We can avoid this by setting a `package.json` in the functions root folder (we don't care about dependencies because we will use Webpack tree shaking feature).
 
@@ -238,6 +241,7 @@ SAM requires the `CodeUri` to be a path that contains a `package.json` file. Fol
   }
 }
 ```
+
 ```
 {
   "name": "@aws-sam-typescript-webpack-backend/hello-function",
@@ -249,6 +253,7 @@ SAM requires the `CodeUri` to be a path that contains a `package.json` file. Fol
   ]
 }
 ```
+
 ```
 {
   "name": "@aws-sam-typescript-webpack-backend/goodbye-function",
@@ -270,8 +275,7 @@ We also need to add a `tsconfig.json` file in the functions root folder to tells
   "extends": "../build/tsconfig.json",
   "compilerOptions": {
     "rootDir": "./",
-    "outDir": "./dist",
-    "typeRoots": ["./node_modules/@types"]
+    "outDir": "./dist"
   },
   "include": ["./*-function/src/*.ts"]
 }
@@ -280,9 +284,18 @@ We also need to add a `tsconfig.json` file in the functions root folder to tells
 And the last one is the `webpack.config.ts` configuration file :
 
 ```
-import { Configuration } from 'webpack';
+import { Configuration, Entry } from 'webpack';
 
+import fs from 'fs-extra';
 import webpackNodeExternals from 'webpack-node-externals';
+
+const apps: Entry = {};
+fs.readdirSync('./')
+  .filter((file) => file.endsWith('-function'))
+  .forEach(function (app) {
+    console.log(app + ' found !');
+    apps[app] = './' + app + '/src/app.ts';
+  });
 
 const config: Configuration = {
   mode: 'production',
@@ -291,10 +304,7 @@ const config: Configuration = {
 
   externals: [webpackNodeExternals()],
 
-  entry: {
-    'hello-function': './hello-function/src/app.ts',
-    'goodbye-function': './goodbye-function/src/app.ts',
-  },
+  entry: apps,
 
   output: {
     filename: '[name]/dist/app.js',
@@ -325,9 +335,9 @@ This configuration will do the tree shaking for each function and will put the g
 
 ## How to use
 
-From the root folder use the following commands : 
+From the root folder use the following commands :
 
-* `yarn clean` to remove all generated files and folders
-* `yarn build` to build the application with TypeScript
-* `yarn bundle` to bundle the application with Webpack
-* `yarn deploy` to deploy the application with SAM 
+- `yarn clean` to remove all generated files and folders
+- `yarn build` to build the application with TypeScript
+- `yarn bundle` to bundle the application with Webpack
+- `yarn deploy` to deploy the application with SAM

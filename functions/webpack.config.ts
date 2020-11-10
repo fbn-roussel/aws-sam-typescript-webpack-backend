@@ -1,6 +1,15 @@
-import { Configuration } from 'webpack';
+import { Configuration, Entry } from 'webpack';
 
+import fs from 'fs-extra';
 import webpackNodeExternals from 'webpack-node-externals';
+
+const apps: Entry = {};
+fs.readdirSync('./')
+  .filter((file) => file.endsWith('-function'))
+  .forEach(function (app) {
+    console.log(app + ' found !');
+    apps[app] = './' + app + '/src/app.ts';
+  });
 
 const config: Configuration = {
   mode: 'production',
@@ -9,10 +18,7 @@ const config: Configuration = {
 
   externals: [webpackNodeExternals()],
 
-  entry: {
-    'hello-function': './hello-function/src/app.ts',
-    'goodbye-function': './goodbye-function/src/app.ts',
-  },
+  entry: apps,
 
   output: {
     filename: '[name]/dist/app.js',
