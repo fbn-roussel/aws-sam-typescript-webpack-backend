@@ -12,6 +12,6 @@
     "build:layers": "cd layers/global-layers/common-global-layer && yarn build && cd ../../..",
     "build:functions": "cd functions && yarn build && cd ..",
     "bundle": "cd functions && yarn bundle",
-    "deploy": "sam build && sam deploy --guided"
+    "deploy": "sam build --cache --parallel && sam deploy --guided"
   }
 }
