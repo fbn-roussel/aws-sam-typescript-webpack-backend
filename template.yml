@@ -14,6 +14,9 @@ Globals:
     Timeout: 3
     AutoPublishAlias: live
     Tracing: Active
+    Environment:
+      Variables:
+        REGION: !Ref AWS::Region
 
 Resources:
   AwsGlobalLayer:
@@ -47,9 +50,6 @@ Resources:
         - !Ref HelloFunctionLayer
         - !Ref CommonGlobalLayer
         - !Ref AwsGlobalLayer
-      Environment:
-        Variables:
-          REGION: !Ref AWS::Region
 
   HelloFunctionLayer:
     Type: AWS::Serverless::LayerVersion
