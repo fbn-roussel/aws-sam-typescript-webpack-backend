@@ -1,6 +1,7 @@
 openapi: 3.0.3
 info:
-  version: 1.0.0
+  version:
+    Fn::Sub: '${ApiVersion}'
   title: Customer API
   license:
     name: MIT
@@ -42,7 +43,7 @@ paths:
         timeoutInMillis: 5000
         httpMethod: post
         uri:
-          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateCustomerFunction.Arn}:live/invocations
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateCustomerFunction.Arn}:${AutoPublishAlias}/invocations
 components:
   schemas:
     Error:

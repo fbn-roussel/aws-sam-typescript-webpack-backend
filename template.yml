@@ -15,6 +15,10 @@ Parameters:
     Type: String
     Description: The version identifier of the API documentation snapshot.
     Default: 1.0.0
+  AutoPublishAlias:
+    Type: String
+    Description: Name of the Lambda alias.
+    Default: live
 
 Globals:
   Api:
@@ -27,7 +31,7 @@ Globals:
     Handler: dist/app.handler
     MemorySize: 128
     Timeout: 3
-    AutoPublishAlias: live
+    AutoPublishAlias: !Ref AutoPublishAlias
     Tracing: Active
     Environment:
       Variables:
