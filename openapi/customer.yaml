@@ -1,0 +1,101 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Customer API
+  license:
+    name: MIT
+paths:
+  /customers:
+    post:
+      tags:
+        - customers
+      summary: Create a customer
+      operationId: createCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomer'
+      responses:
+        201:
+          description: Customer created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+        timeoutInMillis: 5000
+        httpMethod: post
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateCustomerFunction.Arn}:live/invocations
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    CreateCustomer:
+      type: object
+      required:
+        - type
+        - lastName
+        - firstName
+      properties:
+        type:
+          type: string
+          enum:
+            - PROSPECT
+            - CUSTOMER
+        lastName:
+          type: string
+        firstName:
+          type: string
+        email:
+          type: string
+    Customer:
+      type: object
+      required:
+        - id
+        - type
+        - lastName
+        - firstName
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - PROSPECT
+            - CUSTOMER
+        lastName:
+          type: string
+        firstName:
+          type: string
+        email:
+          type: string
+x-amazon-apigateway-request-validator: all
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true

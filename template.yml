@@ -6,7 +6,22 @@ Description: >-
 Transform:
   - AWS::Serverless-2016-10-31
 
+Parameters:
+  ApiStageName:
+    Type: String
+    Description: The name of the stage, which API Gateway uses as the first path segment in the invoke Uniform Resource Identifier (URI).
+    Default: dev
+  ApiVersion:
+    Type: String
+    Description: The version identifier of the API documentation snapshot.
+    Default: 1.0.0
+
 Globals:
+  Api:
+    EndpointConfiguration:
+      Type: REGIONAL
+    OpenApiVersion: 3.0.3
+    TracingEnabled: true
   Function:
     Runtime: nodejs12.x
     Handler: dist/app.handler
@@ -19,68 +34,67 @@ Globals:
         REGION: !Ref AWS::Region
 
 Resources:
-  AwsGlobalLayer:
+  CustomerApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref ApiStageName
+      DefinitionBody: !Transform { Name: AWS::Include, Parameters: { Location: openapi/customer.yaml } }
+
+  CustomerApiDocumentation:
+    Type: AWS::ApiGateway::DocumentationVersion
+    Properties:
+      RestApiId: !Ref CustomerApi
+      DocumentationVersion: !Ref ApiVersion
+
+  CustomerTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: partitionKey
+          KeyType: HASH
+        - AttributeName: sortKey
+          KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: partitionKey
+          AttributeType: S
+        - AttributeName: sortKey
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+
+  ApplicationLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      Description: AWS dependencies global layer
-      ContentUri: layers/global-layers/aws-global-layer
+      Description: Application layer
+      ContentUri: layers/application-layer
       CompatibleRuntimes:
         - nodejs12.x
       RetentionPolicy: Delete
     Metadata:
       BuildMethod: nodejs12.x
 
-  CommonGlobalLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      Description: Common dependencies global layer
-      ContentUri: layers/global-layers/common-global-layer
-      CompatibleRuntimes:
-        - nodejs12.x
-      RetentionPolicy: Delete
-    Metadata:
-      BuildMethod: nodejs12.x
-
-  HelloFunction:
+  CreateCustomerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Description: Hello function
-      CodeUri: functions/hello-function
+      Description: Create customer function
+      CodeUri: functions/create-customer-function
       Layers:
-        - !Ref HelloFunctionLayer
-        - !Ref CommonGlobalLayer
-        - !Ref AwsGlobalLayer
-
-  HelloFunctionLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      Description: Hello function layer
-      ContentUri: layers/function-layers/hello-function-layer
-      CompatibleRuntimes:
-        - nodejs12.x
-      RetentionPolicy: Delete
-    Metadata:
-      BuildMethod: nodejs12.x
-
-  GoodbyeFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: Goodbye function
-      CodeUri: functions/goodbye-function
-      Layers:
-        - !Ref GoodbyeFunctionLayer
-        - !Ref CommonGlobalLayer
-
-  GoodbyeFunctionLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      Description: Goodbye function layer
-      ContentUri: layers/function-layers/goodbye-function-layer
-      CompatibleRuntimes:
-        - nodejs12.x
-      RetentionPolicy: Delete
-    Metadata:
-      BuildMethod: nodejs12.x
+        - !Ref ApplicationLayer
+      Environment:
+        Variables:
+          REGION: !Ref AWS::Region
+          CUSTOMER_TABLE_NAME: !Ref CustomerTable
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref CustomerTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CustomerApi
+            Path: /customers
+            Method: post
 
 Outputs:
   StackName:
@@ -93,29 +107,27 @@ Outputs:
     Description: Stack region
     Value: !Ref AWS::Region
 
-  AwsGlobalLayerArn:
-    Description: AWS dependencies global layer ARN
-    Value: !Ref AwsGlobalLayer
-  CommonGlobalLayerArn:
-    Description: Common dependencies global layer ARN
-    Value: !Ref CommonGlobalLayer
+  CustomerApiId:
+    Description: Customer API ID
+    Value: !Ref CustomerApi
+  CustomerApiUrl:
+    Description: Customer API URL
+    Value: !Sub https://${CustomerApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiStageName}/
 
-  HelloFunctionName:
-    Description: Hello function name
-    Value: !Ref HelloFunction
-  HelloFunctionArn:
-    Description: Hello function ARN
-    Value: !GetAtt HelloFunction.Arn
-  HelloFunctionLayerArn:
-    Description: Hello function layer ARN
-    Value: !Ref HelloFunctionLayer
+  CustomerTableName:
+    Description: Customer table name
+    Value: !Ref CustomerTable
+  CustomerTableArn:
+    Description: Customer table ARN
+    Value: !GetAtt CustomerTable.Arn
 
-  GoodbyeFunctionName:
-    Description: Goodbye function name
-    Value: !Ref GoodbyeFunction
-  GoodbyeFunctionArn:
-    Description: Goodbye function ARN
-    Value: !GetAtt GoodbyeFunction.Arn
-  GoodbyeFunctionLayerArn:
-    Description: Goodbye function layer ARN
-    Value: !Ref GoodbyeFunctionLayer
+  ApplicationLayerArn:
+    Description: Application layer ARN
+    Value: !Ref ApplicationLayer
+
+  CreateCustomerFunctionName:
+    Description: Create customer function name
+    Value: !Ref CreateCustomerFunction
+  CreateCustomerFunctionArn:
+    Description: Create customer function ARN
+    Value: !GetAtt CreateCustomerFunction.Arn
