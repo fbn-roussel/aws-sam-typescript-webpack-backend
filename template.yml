@@ -122,6 +122,27 @@ Resources:
             Path: /customers
             Method: post
 
+  GetCustomerByIdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: Get customer by ID function
+      CodeUri: functions/get-customer-by-id-function
+      Environment:
+        Variables:
+          CUSTOMER_TABLE_NAME: !Ref CustomerTable
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref CustomerTable
+        - KMSDecryptPolicy:
+            KeyId: !Ref ApplicationKey
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CustomerApi
+            Path: /customers
+            Method: post
+
 Outputs:
   StackName:
     Description: Stack name
@@ -167,3 +188,10 @@ Outputs:
   CreateCustomerFunctionArn:
     Description: Create customer function ARN
     Value: !GetAtt CreateCustomerFunction.Arn
+
+  GetCustomerByIdFunctionName:
+    Description: Get customer by ID function name
+    Value: !Ref GetCustomerByIdFunction
+  GetCustomerByIdFunctionArn:
+    Description: Get customer by ID function ARN
+    Value: !GetAtt GetCustomerByIdFunction.Arn

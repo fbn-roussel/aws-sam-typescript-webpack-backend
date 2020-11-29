@@ -6,7 +6,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { logger } from './logger';
 import { ProcessError } from './error';
 
-export const handleEvent = async <I, O>(event: APIGatewayProxyEvent, processor: (input: I) => Promise<O>): Promise<APIGatewayProxyResult> => {
+export const handleEvent = async <I, O>(event: APIGatewayProxyEvent, processor: (input: I) => Promise<[O, number]>): Promise<APIGatewayProxyResult> => {
   let input: I;
   try {
     input = parseEvent(event);
@@ -18,7 +18,7 @@ export const handleEvent = async <I, O>(event: APIGatewayProxyEvent, processor: 
     };
   }
 
-  let output: O;
+  let output: [O, number];
   try {
     output = await processor(input);
   } catch (error) {
@@ -38,8 +38,8 @@ export const handleEvent = async <I, O>(event: APIGatewayProxyEvent, processor: 
   }
 
   return {
-    statusCode: 200,
-    body: JSON.stringify(output),
+    statusCode: output[1],
+    body: output[0] ? JSON.stringify(output[0]) : '',
   };
 };
 

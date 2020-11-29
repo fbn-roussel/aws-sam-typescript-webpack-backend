@@ -8,7 +8,7 @@ export class CreateCustomerProcessor {
     this.#createCustomerService = createCustomerService;
   }
 
-  process = async (createCustomerResource: CreateCustomerResource): Promise<CustomerResource> => {
+  process = async (createCustomerResource: CreateCustomerResource): Promise<[CustomerResource, number]> => {
     try {
       const createCustomer = {
         type: CustomerType[createCustomerResource.type.toString() as keyof typeof CustomerType],
@@ -19,13 +19,16 @@ export class CreateCustomerProcessor {
 
       const customer = await this.#createCustomerService.create(createCustomer);
 
-      return {
-        id: customer.id,
-        type: createCustomerResource.type,
-        lastName: createCustomerResource.lastName,
-        firstName: createCustomerResource.firstName,
-        email: createCustomerResource.email,
-      };
+      return [
+        {
+          id: customer.id,
+          type: createCustomerResource.type,
+          lastName: createCustomerResource.lastName,
+          firstName: createCustomerResource.firstName,
+          email: createCustomerResource.email,
+        },
+        200,
+      ];
     } catch (error) {
       throw new ProcessError(error, 500);
     }
