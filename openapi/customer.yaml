@@ -47,6 +47,49 @@ paths:
         httpMethod: post
         uri:
           Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateCustomerFunction.Arn}:${AutoPublishAlias}/invocations
+  /customers/{customerId}:
+    get:
+      tags:
+        - customers
+      summary: Get a customer by ID
+      operationId: getCustomerById
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Customer found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Customer not found
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - CognitoAuthorizer:
+            - Fn::Sub: ${ApplicationUserPoolResourceServer}/api_access
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+        timeoutInMillis: 5000
+        httpMethod: get
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetCustomerByIdFunction.Arn}:${AutoPublishAlias}/invocations
 components:
   schemas:
     Error:
