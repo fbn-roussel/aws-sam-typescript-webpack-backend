@@ -19,7 +19,7 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateCustomer'
       responses:
-        201:
+        200:
           description: Customer created
           content:
             application/json:
