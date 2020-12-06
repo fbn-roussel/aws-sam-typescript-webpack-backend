@@ -3,12 +3,10 @@ import pino from 'pino';
 export const logger = pino({
   level: 'info',
   base: null,
-  timestamp: () => ',"timestamp":' + Date.now(),
-  messageKey: 'message',
-  nestedKey: 'metadata',
+  nestedKey: 'data',
   formatters: {
     level(label: string, number: number) {
-      return { level: label.toUpperCase() };
+      return { lvl: label };
     },
   },
 });

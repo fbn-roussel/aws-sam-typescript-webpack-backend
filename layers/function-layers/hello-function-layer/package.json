@@ -1,9 +1,0 @@
-{
-  "name": "@aws-sam-typescript-webpack-backend/hello-function-layer",
-  "version": "1.0.0",
-  "private": true,
-  "engines": {
-    "node": "^12"
-  },
-  "dependencies": {}
-}

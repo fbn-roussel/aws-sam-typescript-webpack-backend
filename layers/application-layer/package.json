@@ -1,5 +1,5 @@
 {
-  "name": "@aws-sam-typescript-webpack-backend/common-global-layer",
+  "name": "@aws-sam-typescript-webpack-backend/application-layer",
   "version": "1.0.0",
   "private": true,
   "engines": {
@@ -7,10 +7,9 @@
   },
   "scripts": {
     "clean": "rm -rf node_modules dist",
-    "build": "mkdir -p dist && rsync -avr ../../../shared dist --exclude node_modules --exclude src && yarn install"
+    "build": "mkdir -p dist && rsync -avr ../../shared dist --exclude node_modules --exclude src && yarn install"
   },
   "dependencies": {
-    "source-map-support": "^0.5.19",
     "@aws-sam-typescript-webpack-backend/shared": "file:./dist/shared"
   },
   "files": [

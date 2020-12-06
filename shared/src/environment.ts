@@ -1,6 +1,6 @@
 declare namespace NodeJS {
   export interface ProcessEnv {
-    LOCAL: string;
     REGION: string;
+    CUSTOMER_TABLE_NAME: string;
   }
 }
