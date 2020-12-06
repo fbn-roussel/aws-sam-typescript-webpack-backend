@@ -26,16 +26,6 @@ Globals:
       Type: REGIONAL
     OpenApiVersion: 3.0.3
     TracingEnabled: true
-    Auth:
-      DefaultAuthorizer: CognitoAuthorizer
-      Authorizers:
-        CognitoAuthorizer:
-          UserPoolArn: !GetAtt ApplicationUserPool.Arn
-          AuthType: COGNITO_USER_POOLS
-          Identity:
-            Header: Authorization
-          AuthorizationScopes:
-            - !Sub ${ApplicationUserPoolResourceServer}/api_access
   Function:
     Runtime: nodejs12.x
     Handler: dist/app.handler
@@ -50,58 +40,6 @@ Globals:
       - !Ref ApplicationLayer
 
 Resources:
-  ApplicationKey:
-    Type: AWS::KMS::Key
-    Properties:
-      EnableKeyRotation: true
-      KeyPolicy:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
-            Action: kms:*
-            Resource: '*'
-
-  ApplicationKeyAlias:
-    Type: AWS::KMS::Alias
-    Properties:
-      TargetKeyId: !Ref ApplicationKey
-      AliasName: !Sub alias/${AWS::StackName}
-
-  ApplicationUserPool:
-    Type: AWS::Cognito::UserPool
-
-  ApplicationUserPoolDomain:
-    Type: AWS::Cognito::UserPoolDomain
-    Properties:
-      UserPoolId: !Ref ApplicationUserPool
-      Domain: !Ref AWS::StackName
-
-  ApplicationUserPoolClient:
-    Type: AWS::Cognito::UserPoolClient
-    Properties:
-      UserPoolId: !Ref ApplicationUserPool
-      GenerateSecret: true
-      AllowedOAuthFlows:
-        - client_credentials
-      AllowedOAuthScopes:
-        - !Sub ${ApplicationUserPoolResourceServer}/api_access
-      ExplicitAuthFlows:
-        - ALLOW_ADMIN_USER_PASSWORD_AUTH
-        - ALLOW_REFRESH_TOKEN_AUTH
-      AllowedOAuthFlowsUserPoolClient: true
-
-  ApplicationUserPoolResourceServer:
-    Type: AWS::Cognito::UserPoolResourceServer
-    Properties:
-      UserPoolId: !Ref ApplicationUserPool
-      Name: !Sub ${AWS::StackName}-ResourceServer
-      Identifier: !Sub ${AWS::StackName}-ResourceServer
-      Scopes:
-        - ScopeName: api_access
-          ScopeDescription: Scope for API access
-
   CustomerApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -131,7 +69,7 @@ Resources:
       SSESpecification:
         SSEEnabled: true
         SSEType: KMS
-        KMSMasterKeyId: !Ref ApplicationKey
+        KMSMasterKeyId: alias/aws/dynamodb
 
   ApplicationLayer:
     Type: AWS::Serverless::LayerVersion
@@ -155,8 +93,6 @@ Resources:
       Policies:
         - DynamoDBWritePolicy:
             TableName: !Ref CustomerTable
-        - KMSDecryptPolicy:
-            KeyId: !Ref ApplicationKey
       Events:
         Api:
           Type: Api
@@ -176,15 +112,13 @@ Resources:
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref CustomerTable
-        - KMSDecryptPolicy:
-            KeyId: !Ref ApplicationKey
       Events:
         Api:
           Type: Api
           Properties:
             RestApiId: !Ref CustomerApi
-            Path: /customers
-            Method: post
+            Path: /customers/{customerId}
+            Method: get
 
 Outputs:
   StackName:
@@ -196,16 +130,6 @@ Outputs:
   StackRegion:
     Description: Stack region
     Value: !Ref AWS::Region
-
-  ApplicationKeyId:
-    Description: Application KMS key ID
-    Value: !Ref ApplicationKey
-  ApplicationKeyArn:
-    Description: Application KMS key ARN
-    Value: !GetAtt ApplicationKey.Arn
-  ApplicationKeyAlias:
-    Description: Application KMS key alias
-    Value: !Ref ApplicationKeyAlias
 
   CustomerApiId:
     Description: Customer API ID
