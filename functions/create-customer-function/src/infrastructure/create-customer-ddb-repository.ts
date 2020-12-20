@@ -1,4 +1,4 @@
-import { Customer, CustomerEntity, ddb } from '@aws-sam-typescript-webpack-backend/shared';
+import { Customer, CustomerEntity, saveItem } from '@aws-sam-typescript-webpack-backend/shared';
 import { CreateCustomerRepository } from '../domain/create-customer-repository';
 
 export class CreateCustomerDdbRepository implements CreateCustomerRepository {
@@ -12,6 +12,6 @@ export class CreateCustomerDdbRepository implements CreateCustomerRepository {
       email: customer.email,
     });
 
-    await ddb.save(customerEntity);
+    await saveItem(customerEntity);
   };
 }

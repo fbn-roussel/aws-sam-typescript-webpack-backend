@@ -12,6 +12,7 @@
     "build:layers": "cd layers/application-layer && yarn build && cd ../..",
     "build:functions": "cd functions && yarn build && cd ..",
     "bundle": "cd functions && yarn bundle",
-    "deploy": "sam build --parallel && sam deploy --guided"
+    "deploy": "sam build --parallel && sam deploy",
+    "deploy:guided": "sam build --parallel && sam deploy --guided"
   }
 }

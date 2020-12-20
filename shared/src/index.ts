@@ -1,4 +1,4 @@
-export * as ddb from './common/aws-ddb';
+export * from './common/aws-ddb';
 export * from './common/handler';
 export * from './common/error';
 export * from './common/logger';

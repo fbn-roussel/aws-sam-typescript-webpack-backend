@@ -37,6 +37,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security:
+        - CognitoAuthorizer:
+            - Fn::Sub: ${ApplicationUserPoolResourceServer}/api_access
       x-amazon-apigateway-integration:
         type: aws_proxy
         passthroughBehavior: when_no_match
@@ -77,6 +80,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security:
+        - CognitoAuthorizer:
+            - Fn::Sub: ${ApplicationUserPoolResourceServer}/api_access
       x-amazon-apigateway-integration:
         type: aws_proxy
         passthroughBehavior: when_no_match
@@ -135,6 +141,16 @@ components:
           type: string
         email:
           type: string
+  securitySchemes:
+    CognitoAuthorizer:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: cognito_user_pools
+      x-amazon-apigateway-authorizer:
+        type: cognito_user_pools
+        providerARNs:
+          - Fn::Sub: ${ApplicationUserPool.Arn}
 x-amazon-apigateway-request-validator: all
 x-amazon-apigateway-request-validators:
   all:
